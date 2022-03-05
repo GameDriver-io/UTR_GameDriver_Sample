@@ -168,7 +168,7 @@ namespace Toolkit_Tests
             IEnumerator<bool> result;
 
             // Load the MouseMoveObject scene
-            yield return client.("MouseMoveObject");
+            yield return client.LoadScene("MouseMoveObject");
 
             // Wait for the Cylinder object to exist in the project hierarchy
             yield return client.WaitForObject("//*[@name='Cylinder']");
