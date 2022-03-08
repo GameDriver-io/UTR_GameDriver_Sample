@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-//using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.SceneManagement;
-using System.Threading;
 using System;
 using gdio.common.objects;
 using gdio.unity_utr_api;
@@ -24,7 +22,7 @@ namespace Toolkit_Tests
 
             // Initialize the CoApiClient
             client = new CoApiClient();
-            
+
             // Setup logging
             client.LoggedMessage += (s, e) =>
             {
@@ -33,19 +31,19 @@ namespace Toolkit_Tests
 
             return;
         }
-        
+
         // A Test behaves as an ordinary method. In this case we're connecting the the agent running in the Unity project
         [UnityTest, Order(1)]
         public IEnumerator T001_ConnectToGame()
         {
             // Define an IEnumerator
             IEnumerator<bool> result;
-            
+
             // Perform an action that yields a result
             yield return result = client.Connect("127.0.0.1", 19734, 30);
 
             // Check the result is what you expect
-            Assert.IsTrue(result.Current); 
+            Assert.IsTrue(result.Current);
 
         }
 
@@ -61,7 +59,7 @@ namespace Toolkit_Tests
             // Check the return value is true
             Assert.IsTrue(result.Current);
         }
-        
+
 
         [UnityTest, Order(3)]
         public IEnumerator T003_WaitForobjectExistsTest()
@@ -78,16 +76,13 @@ namespace Toolkit_Tests
             // Check that the result is true
             Assert.IsTrue(result.Current);
         }
-        
+
         [UnityTest, Order(4)] //
         public IEnumerator T004_ClickObject()
         {
             // Define an IEnumerator
             IEnumerator<bool> result;
-
-            // Load the Menu scene
-            yield return client.LoadScene("Menu");
-
+            
             // Wait 1 second
             yield return client.Wait(1);
 
@@ -95,7 +90,7 @@ namespace Toolkit_Tests
             yield return result = client.ClickObject(MouseButtons.LEFT, "//*[@name='Load_UISample']", 5);
 
             // Example logging
-            UnityEngine.Debug.Log($"ClickObject return string='{result.Current.ToString()}'");
+            UnityEngine.Debug.Log($"ClickObject return string='{result.Current}'");
 
             yield return client.Wait(1);
 
@@ -104,32 +99,10 @@ namespace Toolkit_Tests
         }
 
         [UnityTest, Order(5)]
-        public IEnumerator T005_CallMethodGenericReturnStringTest()
-        {
-            // Define an IEnumerator
-            IEnumerator result;
-
-            // Load The UISample Scene
-            yield return client.LoadScene("UISample");
-
-            // Call a method attached in the HipProjectManager script attached to the Canvas object, and pass in a String
-            yield return result = client.CallMethod<string>("//*[@name='Canvas']/fn:component('HipProjectManager')", "LoadDetails", new string[] { "string:The Test was run on " + DateTime.Now.ToShortDateString() });
-
-            // Log the string returned from the CallMethod command
-            UnityEngine.Debug.Log($"CallMethod return string='{result.Current.ToString()}'");
-
-            // Check that the return value from the CallMethod command returns a string
-            Assert.IsTrue(result.Current.GetType().Equals(typeof(string)));
-        }
-
-        [UnityTest, Order(6)]
         public IEnumerator T006_CallMethodGenericReturnIntTest()
         {
             // Define an IEnumerator
             IEnumerator result;
-
-            // Load The UISample scene
-            yield return client.LoadScene("UISample");
 
             // Call a method attached in the HipProjectManager script attached to the Canvas object, and pass in 2 Int parameters
             yield return result = client.CallMethod<int>("//*[@name='Canvas']/fn:component('HipProjectManager')", "DoMath", new object[] { 1, 2 });
@@ -142,7 +115,7 @@ namespace Toolkit_Tests
             Assert.AreEqual(3, result.Current, "DoMath failed");
         }
 
-        [UnityTest, Order(7)]
+        [UnityTest, Order(6)]
         public IEnumerator T007_ComplexObjectSerializationTest()
         {
             // Define an IEnumerator
@@ -161,14 +134,11 @@ namespace Toolkit_Tests
             Assert.IsTrue(result.Current.GetType().Equals(typeof(Color)));
         }
 
-        [UnityTest, Order(8)]
+        [UnityTest, Order(7)]
         public IEnumerator T008_MoveMouseToObject()
         {
             // Define an IEnumerator
             IEnumerator<bool> result;
-
-            // Load the MouseMoveObject scene
-            yield return client.LoadScene("MouseMoveObject");
 
             // Wait for the Cylinder object to exist in the project hierarchy
             yield return client.WaitForObject("//*[@name='Cylinder']");
@@ -179,7 +149,7 @@ namespace Toolkit_Tests
 
         }
 
-        [UnityTest, Order(9)]
+        [UnityTest, Order(8)]
         public IEnumerator T009_MouseDrag()
         {
             // Define an IEnumerator
@@ -213,11 +183,12 @@ namespace Toolkit_Tests
 
         }
 
-        [UnityTest, Order(10)]
+        [UnityTest, Order(9)]
         public IEnumerator T010_KeyboardMovement()
         {
             // Set up the test
             yield return client.LoadScene("MoveObjectScene");
+            
             IEnumerator result;
             yield return result = client.WaitForEmptyInput();
             UnityEngine.Debug.Log($"WaitForEmptyInput return string='{result.Current.ToString()}'");
